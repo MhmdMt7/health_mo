@@ -7,7 +7,7 @@ import Doctors from "./Doctors";
 import Booking from "./Booking";
 import Contact from "./Contact";
 import Footer from "./Footer";
-import { FiArrowUp } from "react-icons/fi";
+import { FiArrowUp, FiMenu, FiX } from "react-icons/fi";
 
 export default function Home() {
   return (
@@ -25,20 +25,41 @@ export default function Home() {
   );
 }
 
-// Navbar
+// Navbar بدون sidebar
 function Navbar() {
   const [scrolled, setScrolled] = React.useState(false);
+  const [menuOpen, setMenuOpen] = React.useState(false);
+  const [activeSection, setActiveSection] = React.useState("home");
   const links = ["home", "about", "services", "doctors", "booking", "contact"];
 
   React.useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 60);
+
+    const handleActiveSection = () => {
+      links.forEach((link) => {
+        const section = document.getElementById(link);
+        if (section) {
+          const top = section.getBoundingClientRect().top;
+          if (top <= 100 && top >= -section.offsetHeight + 100) {
+            setActiveSection(link);
+          }
+        }
+      });
+    };
+
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleActiveSection);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("scroll", handleActiveSection);
+    };
   }, []);
 
   const scrollToSection = (id) => {
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: "smooth" });
+    setMenuOpen(false); // يغلق القائمة على الموبايل بعد الضغط
   };
 
   return (
@@ -46,20 +67,41 @@ function Navbar() {
       initial={{ y: -80, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-        scrolled
-          ? "bg-white/90 shadow-md backdrop-blur-md py-2"
-          : "bg-transparent py-4"
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${
+        scrolled ? "bg-white/90 shadow-md py-2" : "bg-transparent py-4"
       }`}
     >
-      <div className="container mx-auto flex justify-between items-center px-6">
-        <h1 className="text-2xl font-bold text-blue-600">Health Unit</h1>
-        <ul className="flex space-x-6">
+      <div className="container gap-32 mx-auto flex justify-between items-center px-6">
+        <h1
+          className=" w-48 text-2xl font-bold text-blue-600 cursor-pointer"
+          onClick={() => scrollToSection("home")}
+        >
+          Health Unit
+        </h1>
+
+        {/* زر الموبايل */}
+        <button
+          className="md:hidden text-gray-700"
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          {menuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
+        </button>
+
+        {/* روابط Navbar */}
+        <ul
+          className={`flex flex-col md:flex-row md:space-x-6 md:items-center w-full md:w-auto overflow-hidden transition-all duration-300 ${
+            menuOpen ? "max-h-96 mt-2" : "max-h-0 md:max-h-full"
+          }`}
+        >
           {links.map((link) => (
-            <li key={link}>
+            <li key={link} className="md:mx-2">
               <button
                 onClick={() => scrollToSection(link)}
-                className="capitalize text-gray-700 relative group"
+                className={`capitalize relative group py-2 px-4 md:px-0 ${
+                  activeSection === link
+                    ? "text-blue-600 font-semibold"
+                    : "text-gray-700"
+                }`}
               >
                 {link}
                 <span className="absolute left-0 bottom-0 w-0 h-[2px] bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
