@@ -59,7 +59,7 @@ function Navbar() {
   const scrollToSection = (id) => {
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: "smooth" });
-    setMenuOpen(false); // يغلق القائمة على الموبايل بعد الضغط
+    setMenuOpen(false);
   };
 
   return (
@@ -67,13 +67,14 @@ function Navbar() {
       initial={{ y: -80, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${
-        scrolled ? "bg-white/90 shadow-md py-2" : "bg-transparent py-4"
-      }`}
+      className={`top-0 left-0 w-full z-50 transition-all duration-500 
+        ${scrolled ? "bg-white/90 shadow-md py-2" : "bg-transparent py-4"}
+        ${menuOpen ? "relative" : "fixed"} md:fixed
+      `}
     >
-      <div className="container gap-32 mx-auto flex justify-between items-center px-6">
+      <div className="container mx-auto flex justify-between items-center px-6">
         <h1
-          className=" w-48 text-2xl font-bold text-blue-600 cursor-pointer"
+          className="w-48 text-2xl font-bold text-blue-600 cursor-pointer"
           onClick={() => scrollToSection("home")}
         >
           Health Unit
@@ -89,9 +90,9 @@ function Navbar() {
 
         {/* روابط Navbar */}
         <ul
-          className={`flex flex-col md:flex-row md:space-x-6 md:items-center w-full md:w-auto overflow-hidden transition-all duration-300 ${
-            menuOpen ? "max-h-96 mt-2" : "max-h-0 md:max-h-full"
-          }`}
+          className={`flex flex-col md:flex-row md:space-x-6 md:items-center w-full md:w-auto overflow-hidden transition-all duration-300 
+            ${menuOpen ? "max-h-96 mt-2" : "max-h-0 md:max-h-full"}
+          `}
         >
           {links.map((link) => (
             <li key={link} className="md:mx-2">
