@@ -71,9 +71,9 @@ function Navbar() {
         scrolled ? "bg-white/90 shadow-md py-2" : "bg-transparent py-4"
       }`}
     >
-      <div className="container gap-32 mx-auto flex justify-between items-center px-6">
+      <div className="container  mx-auto flex justify-between items-center px-6">
         <h1
-          className=" w-48 text-2xl font-bold text-blue-600 cursor-pointer"
+          className="  text-2xl font-bold text-blue-600 cursor-pointer"
           onClick={() => scrollToSection("home")}
         >
           Health Unit
