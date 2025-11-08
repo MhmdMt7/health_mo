@@ -25,35 +25,17 @@ export default function Home() {
   );
 }
 
-// Navbar بدون sidebar
+// ✅ Navbar احترافي وثابت في الأعلى
 function Navbar() {
-  const [scrolled, setScrolled] = React.useState(false);
   const [menuOpen, setMenuOpen] = React.useState(false);
+  const [scrolled, setScrolled] = React.useState(false);
   const [activeSection, setActiveSection] = React.useState("home");
   const links = ["home", "about", "services", "doctors", "booking", "contact"];
 
   React.useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 60);
-
-    const handleActiveSection = () => {
-      links.forEach((link) => {
-        const section = document.getElementById(link);
-        if (section) {
-          const top = section.getBoundingClientRect().top;
-          if (top <= 100 && top >= -section.offsetHeight + 100) {
-            setActiveSection(link);
-          }
-        }
-      });
-    };
-
+    const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
-    window.addEventListener("scroll", handleActiveSection);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("scroll", handleActiveSection);
-    };
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const scrollToSection = (id) => {
@@ -67,61 +49,84 @@ function Navbar() {
       initial={{ y: -80, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
-      className={`top-0 left-0 w-full z-50 transition-all duration-500 
-        ${scrolled ? "bg-white/90 shadow-md py-2" : "bg-transparent py-4"}
-        ${menuOpen ? "relative" : "fixed"} md:fixed
-      `}
+      className={`fixed top-0 left-0 w-full z-50 backdrop-blur-md transition-all duration-500 ${
+        scrolled ? "bg-white/90 shadow-md" : "bg-white/40"
+      }`}
     >
-<<<<<<< HEAD
-      <div className="container  mx-auto flex justify-between items-center px-6">
+      {/* الصف العلوي */}
+      <div className="flex items-center justify-between px-6 py-3">
         <h1
-          className="  text-2xl font-bold text-blue-600 cursor-pointer"
-=======
-      <div className="container mx-auto flex justify-between items-center px-6">
-        <h1
-          className="w-48 text-2xl font-bold text-blue-600 cursor-pointer"
->>>>>>> b6527c00287a3d0fde2dfade7b462dbd1c734f55
+          className="text-2xl font-bold text-blue-600 cursor-pointer"
           onClick={() => scrollToSection("home")}
         >
           Health Unit
         </h1>
 
-        {/* زر الموبايل */}
         <button
           className="md:hidden text-gray-700"
           onClick={() => setMenuOpen(!menuOpen)}
         >
-          {menuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
+          {menuOpen ? <FiX size={26} /> : <FiMenu size={26} />}
         </button>
 
-        {/* روابط Navbar */}
-        <ul
-          className={`flex flex-col md:flex-row md:space-x-6 md:items-center w-full md:w-auto overflow-hidden transition-all duration-300 
-            ${menuOpen ? "max-h-96 mt-2" : "max-h-0 md:max-h-full"}
-          `}
-        >
+        {/* روابط الديسكتوب */}
+        <ul className="hidden md:flex space-x-8">
           {links.map((link) => (
-            <li key={link} className="md:mx-2">
+            <li key={link}>
               <button
                 onClick={() => scrollToSection(link)}
-                className={`capitalize relative group py-2 px-4 md:px-0 ${
+                className={`capitalize text-base font-medium transition-colors duration-300 ${
                   activeSection === link
-                    ? "text-blue-600 font-semibold"
-                    : "text-gray-700"
+                    ? "text-blue-600"
+                    : "text-gray-700 hover:text-blue-600"
                 }`}
               >
                 {link}
-                <span className="absolute left-0 bottom-0 w-0 h-[2px] bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
               </button>
             </li>
           ))}
         </ul>
       </div>
+
+      {/* روابط الموبايل مع أنيميشن */}
+      <motion.ul
+        initial={false}
+        animate={{
+          height: menuOpen ? "auto" : 0,
+          opacity: menuOpen ? 1 : 0,
+        }}
+        transition={{ duration: 0.4 }}
+        className="md:hidden flex flex-col items-center overflow-hidden bg-blue-50 border-t border-blue-100"
+      >
+        {links.map((link, index) => (
+          <motion.li
+            key={link}
+            className="w-full text-center border-b border-blue-100"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{
+              opacity: menuOpen ? 1 : 0,
+              y: menuOpen ? 0 : -10,
+            }}
+            transition={{ delay: index * 0.05 }}
+          >
+            <button
+              onClick={() => scrollToSection(link)}
+              className={`block w-full py-3 capitalize font-medium transition-colors duration-300 ${
+                activeSection === link
+                  ? "text-blue-600"
+                  : "text-gray-700 hover:text-blue-600"
+              }`}
+            >
+              {link}
+            </button>
+          </motion.li>
+        ))}
+      </motion.ul>
     </motion.nav>
   );
 }
 
-// Scroll To Top Button
+// ✅ زر العودة لأعلى الصفحة
 function ScrollToTopButton() {
   const [visible, setVisible] = React.useState(false);
 
@@ -131,9 +136,7 @@ function ScrollToTopButton() {
     return () => window.removeEventListener("scroll", toggleVisibility);
   }, []);
 
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+  const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
 
   return (
     <motion.button
